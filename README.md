@@ -30,16 +30,14 @@ To get started with Zenovation-CodeCraft, follow these instructions:
 ### Setting Up the Project
 
 1. **Clone the Repository**
-
    ```bash
    git clone <repository_url>
    cd Zenovation-CodeCraft
    ```
 2. **Install Dependencies**
-   
-  ```bash
-  pip install streamlit streamlit_ace streamlit_navigation_bar pymongo
-  ```
+   ```bash
+   pip install streamlit streamlit_ace streamlit_navigation_bar pymongo
+   ```
 3. **Run the Application**
    Start the Streamlit application:
    ```bash
