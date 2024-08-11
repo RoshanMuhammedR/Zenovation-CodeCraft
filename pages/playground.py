@@ -5,7 +5,6 @@ import subprocess
 import tempfile
 import os
 
-# Set the Docker container ID
 DOCKER_CONTAINER_ID = '89fe276cd8ba'
 
 st.set_page_config(
@@ -64,10 +63,8 @@ st.markdown("""
     <hr class="custom-hr">
 """, unsafe_allow_html=True)
 
-# Language selection
 language = st.selectbox("Select Language", ["Python", "C", "C++", "Java"])
 
-# Initialize the code editor with default code
 default_code = {
     "Python": """summ = 0
 for i in range(5):
@@ -122,7 +119,6 @@ public class HelloWorld {
 """
 }
 
-# Code and input area
 a, b = st.columns(2)
 
 with a:
@@ -137,13 +133,11 @@ with a:
 
 with b:
     st.header("Input")
-    # Allow users to input all values in one line
     user_input = st.text_area("Enter multiple values separated by spaces")
 
     if st.button("Run Code"):
         st.write("Button clicked")
 
-        # Define file extension based on selected language
         extensions = {
             "Python": ".py",
             "C": ".c",
@@ -153,25 +147,20 @@ with b:
         file_extension = extensions.get(language, ".txt")
         filename = f"HelloWorld{file_extension}" if language == "Java" else f"code{file_extension}"
 
-        # Create a temporary file for the code
         with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension, mode='w', encoding='utf-8') as temp_file:
             temp_file.write(code)
             temp_file_path = temp_file.name
 
-        # Prepare input file if provided
         input_file = None
         if user_input:
-            # Use the same file for input in all cases
             with tempfile.NamedTemporaryFile(delete=False, suffix=".txt", mode='w', encoding='utf-8') as temp_input:
                 temp_input.write(user_input)
                 temp_input_path = temp_input.name
             input_file = temp_input_path
             subprocess.run(['docker', 'cp', temp_input_path, f'{DOCKER_CONTAINER_ID}:/tmp/input.txt'])
 
-        # Copy the code file to Docker container
         subprocess.run(['docker', 'cp', temp_file_path, f'{DOCKER_CONTAINER_ID}:/tmp/{filename}'])
 
-        # Run the code inside the Docker container
         if language == "Python":
             command = f'python3 /tmp/{filename} < /tmp/input.txt' if user_input else f'python3 /tmp/{filename}'
         elif language == "C":
@@ -184,15 +173,12 @@ with b:
         result = subprocess.run(['docker', 'exec', DOCKER_CONTAINER_ID, 'bash', '-c', command], capture_output=True,
                                 text=True)
 
-        # Delete the temporary files in Docker container
         subprocess.run(['docker', 'exec', DOCKER_CONTAINER_ID, 'rm', f'/tmp/{filename}'])
         if user_input:
             subprocess.run(['docker', 'exec', DOCKER_CONTAINER_ID, 'rm', '/tmp/input.txt'])
 
-        # Delete the local temporary files
         os.remove(temp_file_path)
         if user_input:
             os.remove(temp_input_path)
 
-        # Display the result
         st.text(result.stdout if result.stdout else result.stderr)
