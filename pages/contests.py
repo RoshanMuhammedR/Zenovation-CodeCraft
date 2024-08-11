@@ -4,14 +4,12 @@ from pymongo.server_api import ServerApi
 from streamlit_extras.switch_page_button import switch_page
 from streamlit_navigation_bar import st_navbar
 
-# MongoDB connection setup
 uri = "mongodb+srv://126003302:hello123@cluster0.pbomd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(uri, server_api=ServerApi('1'))
 db = client["CodeCraft"]
 users_collection = db["users"]
 contests_collection = db["contests"]
 
-# Set Streamlit page configuration
 st.set_page_config(
     initial_sidebar_state="collapsed",
     page_title="CodeCraft | Learning meets Gamification",
@@ -19,7 +17,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS for the navbar and page elements
 styles = {
     "nav": {
         "background-color": "#007bff",
@@ -81,7 +78,6 @@ st.write('''<hr class="custom-hr">''', unsafe_allow_html=True)
 
 a, b = st.columns(2)
 
-# Left Column - Create Contest
 with a:
     with st.container(border=True):
         st.header("Create Contest")
@@ -109,12 +105,10 @@ with a:
             )
             st.success(f"Contest '{cn}' created successfully!")
 
-# Right Column - Display Contests
 with b:
     st.header("Available Contests")
     st.write("---")
     
-    # Fetch all contests from MongoDB
     contests = contests_collection.find()
     
     for contest in contests:
@@ -127,7 +121,6 @@ with b:
                     un = st.session_state.get("username")  # Get the current user's username
                     
                     if un not in contest["participants"]:
-                        # Update the contest document
                         contests_collection.update_one(
                             {"_id": contest["_id"]},
                             {
@@ -136,7 +129,6 @@ with b:
                             }
                         )
                         
-                        # Increment the contests field in the user's document
                         users_collection.update_one(
                             {"username": un},
                             {"$inc": {"contests": 1}}
