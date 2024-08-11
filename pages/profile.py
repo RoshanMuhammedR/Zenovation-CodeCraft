@@ -4,14 +4,12 @@ from pymongo.server_api import ServerApi
 from streamlit_extras.switch_page_button import switch_page
 from streamlit_navigation_bar import st_navbar
 
-# MongoDB connection setup
 uri = "mongodb+srv://126003302:hello123@cluster0.pbomd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(uri, server_api=ServerApi('1'))
 db = client["CodeCraft"]
 users_collection = db["users"]
 contests_collection = db["contests"]  # Contest collection
 
-# Set Streamlit page configuration
 st.set_page_config(
     initial_sidebar_state="collapsed",
     page_title="CodeCraft | Learning meets Gamification",
@@ -19,7 +17,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS for the navbar and page elements
 styles = {
     "nav": {
         "background-color": "#007bff",
@@ -106,11 +103,9 @@ with c:
     with st.container(border=True):
         st.header("🔥" + str(user_info["streak"]) + " Days of CodeCraft")
 
-# Enrolled Contests
 with st.container(border=True):
     st.header("Enrolled Contests")
-    
-    # Get list of contests the user is registered for
+
     registered_contests = contests_collection.find({"participants": un})
     
     for contest in registered_contests:
@@ -123,11 +118,10 @@ with st.container(border=True):
                     st.session_state["current_contest_question"] = contest["question"]
                     switch_page("problems")
 
-# Your Contests (Assuming this section displays contests created by the user)
 with st.container(border=True):
     st.header("Your Contests")
     
-    created_contests = contests_collection.find({"creator": un})  # Assuming each contest has a "creator" field
+    created_contests = contests_collection.find({"creator": un}) 
     
     for contest in created_contests:
         with st.chat_message("user"):
