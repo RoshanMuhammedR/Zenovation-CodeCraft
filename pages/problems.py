@@ -7,17 +7,14 @@ import subprocess
 import tempfile
 import os
 
-# MongoDB connection setup
 uri = "mongodb+srv://126003302:hello123@cluster0.pbomd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(uri, server_api=ServerApi('1'))
 db = client["CodeCraft"]
 users_collection = db["users"]
 contests_collection = db["contests"]
 
-# Set the Docker container ID
 DOCKER_CONTAINER_ID = '89fe276cd8ba'
 
-# Set Streamlit page configuration
 st.set_page_config(
     initial_sidebar_state="collapsed",
     page_title="CodeCraft | Learning meets Gamification",
@@ -25,7 +22,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS for the navbar and page elements
 styles = {
     "nav": {"background-color": "#007bff", "justify-content": "left"},
     "img": {"padding-right": "14px"},
@@ -70,23 +66,19 @@ st.markdown("""
     <hr class="custom-hr">
 """, unsafe_allow_html=True)
 
-# Fetch the current contest question from session state
 if "current_contest_question" not in st.session_state:
     st.error("No contest question found.")
     st.stop()
 
 question = st.session_state["current_contest_question"]
 
-# Display the contest question
 st.title("Problem Statement")
 st.header(question)
 
 st.write('''<hr class="custom-hr">''', unsafe_allow_html=True)
 
-# Language selection and code editor
 language = st.selectbox("Select Language", ["Python", "C", "C++", "Java"])
 
-# Initialize the code editor with default code
 default_code = {
     "Python": """summ = 0
 for i in range(5):
@@ -133,7 +125,6 @@ public class HelloWorld {
 """
 }
 
-# Code and input area
 a, b = st.columns(2)
 
 with a:
@@ -153,7 +144,6 @@ with b:
     if st.button("Run Code"):
         st.write("Button clicked")
 
-        # Define file extension and filename
         extensions = {
             "Python": ".py",
             "C": ".c",
@@ -163,7 +153,6 @@ with b:
         file_extension = extensions.get(language, ".txt")
         filename = f"code{file_extension}"
 
-        # Create temporary files for the code and input
         with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension, mode='w', encoding='utf-8') as temp_code_file:
             temp_code_file.write(code)
             temp_code_path = temp_code_file.name
@@ -176,7 +165,6 @@ with b:
 
         subprocess.run(['docker', 'cp', temp_code_path, f'{DOCKER_CONTAINER_ID}:/tmp/{filename}'])
 
-        # Construct command to execute code in Docker container
         if language == "Python":
             command = f'python3 /tmp/{filename} < /tmp/input.txt' if user_input else f'python3 /tmp/{filename}'
         elif language == "C":
@@ -188,7 +176,6 @@ with b:
 
         result = subprocess.run(['docker', 'exec', DOCKER_CONTAINER_ID, 'bash', '-c', command], capture_output=True, text=True)
 
-        # Clean up temporary files
         subprocess.run(['docker', 'exec', DOCKER_CONTAINER_ID, 'rm', f'/tmp/{filename}'])
         if user_input:
             subprocess.run(['docker', 'exec', DOCKER_CONTAINER_ID, 'rm', '/tmp/input.txt'])
@@ -196,7 +183,6 @@ with b:
         if user_input:
             os.remove(temp_input_path)
 
-        # Display the result
         st.text(result.stdout if result.stdout else result.stderr)
 
 with st.sidebar:
