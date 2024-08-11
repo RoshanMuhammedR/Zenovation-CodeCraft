@@ -6,16 +6,15 @@ from streamlit_extras.switch_page_button import switch_page
 from streamlit_navigation_bar import st_navbar 
 import hashlib
 
-# MongoDB connection setup
 uri = "mongodb+srv://126003302:hello123@cluster0.pbomd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(uri, server_api=ServerApi('1'))
 db = client["CodeCraft"]
 users_collection = db["users"]
 st.set_page_config(
     initial_sidebar_state="collapsed",
-    page_title="CodeCraft | Learning meets Gamification",  # Title of the page
-    page_icon=":rocket:", # Icon to be displayed in the tab
-    layout="wide"         # Layout of the page (options: 'centered', 'wide')
+    page_title="CodeCraft | Learning meets Gamification",  
+    page_icon=":rocket:", 
+    layout="wide"         
 )
 styles = {
         "nav": {
@@ -38,8 +37,7 @@ styles = {
     }
 
 page = st_navbar(["Profile","Playground","Problems","Contests","About Us"],styles=styles,logo_path="C__deCraft.svg")
-    
-# Apply custom styles
+
 st.markdown("""
     <style>
         .custom-hr {
@@ -68,11 +66,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Function to hash passwords
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# Sign-up page function
 def signup_page():
     st.title("Sign Up")
     username = st.text_input("Username")
@@ -91,7 +87,6 @@ def signup_page():
             st.session_state['username'] = username
             switch_page("profile")
 
-# Login page function
 def login_page():
     st.title("Login")
     username = st.text_input("Username")
@@ -107,7 +102,6 @@ def login_page():
         else:
             st.error("Invalid username or password.")
 
-# Forgot password page function
 def forgot_password_page():
     st.title("Forgot Password")
     username = st.text_input("Username")
@@ -124,21 +118,18 @@ def forgot_password_page():
         else:
             st.error("Username not found.")
 
-# Main function to control page navigation
 def main():
     
     st.title("CodeCraft - Coding Meets Gaming")
     st.write('''<hr class="custom-hr">''', unsafe_allow_html=True)
     
-    # Initialize session state if not already done
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
         st.session_state['username'] = ""
     
     if 'page' not in st.session_state:
-        st.session_state['page'] = "Login"  # Start with the Login page by default
+        st.session_state['page'] = "Login"  
 
-    # If logged in, redirect to the home page
     if st.session_state['logged_in']:
         switch_page("playground")
     else:
