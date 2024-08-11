@@ -51,12 +51,11 @@ To get started with Zenovation-CodeCraft, follow these instructions:
 Zenovation-CodeCraft leverages Docker to provide a secure and scalable environment for code execution. The platform is built on Streamlit, with MongoDB Atlas serving as the backend. When users submit code on the website, it is sent to a Docker container running an Ubuntu instance. This container, equipped with the necessary compilers and interpreters for C, C++, Python, and Java, ensures that the code is executed in a completely isolated environment.
 
 ## Key Features of Docker Integration
-
-## Docker Setup
    - Isolation: Each container provides an isolated environment, preventing conflicts between different versions of dependencies.
    - Consistency: The same environment is used for every build, ensuring consistent results.
    - Reproducibility: Docker images can be versioned and shared, making it easy to reproduce the environment and compile code in the exact same setup.
 
+## Docker Setup
 
 1. **Creating an Ubuntu Docker Image**
    An Ubuntu Docker image was created to serve as the base environment for compiling and running code. Here’s how it was done:
